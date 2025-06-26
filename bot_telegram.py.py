@@ -1,16 +1,17 @@
+import os
 import requests
 from flask import Flask, request
 
 app = Flask(__name__)
 
-# === CONFIGURA TUS DATOS AQUÍ ===
-TOKEN = "7809226174:AAHsozxU9DVP2XyWyvKL17U-5yrwBwaasnA"       # Reemplaza con tu token de BotFather
-CHAT_ID = "1347398020"          # Reemplaza con tu ID de usuario
+# Usa variables de entorno definidas en Render
+TOKEN = os.getenv("7809226174:AAHsozxU9DVP2XyWyvKL17U-5yrwBwaasnA")
+CHAT_ID = os.getenv("1347398020")
 
 @app.route('/', methods=['POST'])
 def webhook():
     data = request.get_json()
-    message = f"📈 Señal recibida:\n\n🧠 Acción: {data['action']}\n📊 Par: {data['symbol']}\n💰 Precio: {data['price']}"
+    message = f"📈 Señal recibida:\n\n🧠 Acción: {data.get('action')}\n📊 Par: {data.get('symbol')}\n💰 Precio: {data.get('price')}"
     send_message(message)
     return 'ok'
 
@@ -19,4 +20,6 @@ def send_message(text):
     payload = {"chat_id": CHAT_ID, "text": text}
     requests.post(url, data=payload)
 
-app.run(host='0.0.0.0', port=5000)
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=5000)
+  
